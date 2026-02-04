@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Your Chrome Extension License</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 50px;
+    }
+
+    .header h1 {
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .header p {
+      font-size: 18px;
+      opacity: 0.95;
+      font-weight: 400;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .pricing-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      border: 3px solid transparent;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+    }
+
+    .pricing-card.selected {
+      border-color: #667eea;
+      box-shadow: 0 15px 50px rgba(102, 126, 234, 0.3);
+    }
+
+    .pricing-card.pro {
+      border: 3px solid #ffd700;
+    }
+
+    .pricing-card.pro.selected {
+      border-color: #667eea;
+    }
+
+    .badge {
+      position: absolute;
+      top: -15px;
+      right: 30px;
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      color: #333;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .plan-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .price {
+      font-size: 48px;
+      font-weight: 800;
+      color: #667eea;
+      margin-bottom: 5px;
+    }
+
+    .price-period {
+      color: #999;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    .features {
+      list-style: none;
+      margin-bottom: 30px;
+    }
+
+    .features li {
+      padding: 12px 0;
+      color: #555;
+      font-size: 15px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+    }
+
+    .features li:last-child {
+      border-bottom: none;
+    }
+
+    .features li:before {
+      content: "✓";
+      color: #667eea;
+      font-weight: bold;
+      font-size: 18px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .select-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .select-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .select-btn.selected {
+      background: #28a745;
+    }
+
+    .select-btn.selected:before {
+      content: "✓ ";
+    }
+
+    .checkout-section {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      max-width: 600px;
+      margin: 0 auto;
+      display: none;
+    }
+
+    .checkout-section.show {
+      display: block;
+    }
+
+    .checkout-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .checkout-header h2 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .checkout-header p {
+      color: #666;
+      font-size: 15px;
+    }
+
+    .selected-plan-info {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+
+    .selected-plan-info h3 {
+      color: #667eea;
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .selected-plan-info .amount {
+      font-size: 32px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 10px;
+      color: #333;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    #paypal-button-container {
+      margin-top: 25px;
+      min-height: 50px;
+    }
+
+    .features-banner {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 20px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-item {
+      text-align: center;
+    }
+
+    .feature-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .feature-item h3 {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .feature-item p {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .message {
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: none;
+      font-size: 14px;
+    }
+
+    .message.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .success-screen {
+      background: white;
+      border-radius: 20px;
+      padding: 50px 40px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      display: none;
+    }
+
+    .success-screen.show {
+      display: block;
+    }
+
+    .success-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+    }
+
+    .success-screen h2 {
+      font-size: 32px;
+      color: #28a745;
+      margin-bottom: 15px;
+    }
+
+    .license-display {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 30px 0;
+    }
+
+    .license-display label {
+      display: block;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .license-key {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #667eea;
+      letter-spacing: 2px;
+      word-break: break-all;
+      border: 2px dashed #667eea;
+    }
+
+    .success-screen p {
+      color: #666;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 13px;
+    }
+
+    .footer .secure-icon {
+      font-size: 16px;
+      margin-right: 5px;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .change-plan-btn {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .change-plan-btn:hover {
+      background: #5a6268;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 32px;
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .features-banner {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .checkout-section,
+      .success-screen {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>🚀 Unlock Premium Features</h1>
+      <p>Choose your plan and get instant access with lifetime updates</p>
+    </div>
+
+    <!-- Features Banner -->
+    <div class="features-banner">
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <h3>Instant License</h3>
+        <p>Delivered to your email</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔄</div>
+        <h3>Lifetime Updates</h3>
+        <p>All future updates included</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💎</div>
+        <h3>Premium Support</h3>
+        <p>Priority email assistance</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔒</div>
+        <h3>No Recurring Fees</h3>
+        <p>One-time payment only</p>
+      </div>
+    </div>
+
+    <!-- Pricing Cards -->
+    <div class="pricing-grid" id="pricing-grid">
+      <div class="pricing-card" data-plan="basic" data-price="4.99">
+        <div class="plan-name">Basic</div>
+        <div class="price">$4.99</div>
+        <div class="price-period">One-time payment</div>
+        <ul class="features">
+          <li>50 exports per day</li>
+          <li>CSV format support</li>
+          <li>XLSX format support</li>
+          <li>Basic email support</li>
+          <li>Lifetime license</li>
+        </ul>
+        <button class="select-btn">Select Basic</button>
+      </div>
+
+      <div class="pricing-card pro" data-plan="pro" data-price="29.99">
+        <div class="badge">Most Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="price">$29.99</div>
+        <div class="price-period">One-time payment</div>
+        <ul class="features">
+          <li>Unlimited exports</li>
+          <li>All formats (CSV, XLSX, JSON, XML)</li>
+          <li>Advanced filtering options</li>
+          <li>Priority email support</li>
+          <li>Lifetime updates included</li>
+          <li>Early access to new features</li>
+        </ul>
+        <button class="select-btn">Select Pro</button>
+      </div>
+    </div>
+
+    <!-- Checkout Section -->
+    <div class="checkout-section" id="checkout-section">
+      <div class="checkout-header">
+        <h2>Complete Your Purchase</h2>
+        <p>Enter your email to receive your license key</p>
+      </div>
+
+      <div class="selected-plan-info" id="selected-plan-info">
+        <h3 id="selected-plan-name">Pro Plan</h3>
+        <div class="amount" id="selected-plan-price">$29.99</div>
+      </div>
+
+      <div class="message" id="message"></div>
+
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input 
+          type="email" 
+          id="email" 
+          placeholder="your@email.com" 
+          required
+        >
+      </div>
+
+      <div id="paypal-button-container"></div>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p style="color: #666;">Processing your payment...</p>
+      </div>
+
+      <button class="change-plan-btn" onclick="changePlan()">Change Plan</button>
+    </div>
+
+    <!-- Success Screen -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">✅</div>
+      <h2>Payment Successful!</h2>
+      <p>Thank you for your purchase. Your license key has been generated and sent to your email.</p>
+      
+      <div class="license-display">
+        <label>Your License Key</label>
+        <div class="license-key" id="license-key-display"></div>
+      </div>
+
+      <p><strong>What's next?</strong></p>
+      <p>1. Check your email for a copy of your license key<br>
+         2. Install the Chrome extension<br>
+         3. Enter your license key to activate premium features</p>
+      
+      <p style="margin-top: 20px; font-size: 13px; color: #999;">
+        Keep your license key safe. You'll need it to activate the extension.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <span class="secure-icon">🔒</span>
+      Secure payment powered by PayPal • Your data is protected with bank-level security
+    </div>
+  </div>
+
+  <!-- PayPal SDK -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AWAcHrjDROQ1x8cgliCNCqfbSA4F70GEhsXVlFozuiof-1j7vepXDZq5LS18kUL6YvDHq8sH4pq299ha&currency=USD"></script>
+
+  <script>
+    let selectedPlan = null;
+    let selectedPrice = null;
+
+    const pricingGrid = document.getElementById('pricing-grid');
+    const checkoutSection = document.getElementById('checkout-section');
+    const successScreen = document.getElementById('success-screen');
+    const emailInput = document.getElementById('email');
+    const messageDiv = document.getElementById('message');
+    const loadingDiv = document.getElementById('loading');
+
+    // Plan selection
+    document.querySelectorAll('.pricing-card').forEach(card => {
+      const selectBtn = card.querySelector('.select-btn');
+      
+      selectBtn.addEventListener('click', () => {
+        selectedPlan = card.dataset.plan;
+        selectedPrice = card.dataset.price;
+        
+        // Update UI
+        document.querySelectorAll('.pricing-card').forEach(c => {
+          c.classList.remove('selected');
+          c.querySelector('.select-btn').classList.remove('selected');
+          c.querySelector('.select-btn').textContent = 'Select ' + c.dataset.plan.charAt(0).toUpperCase() + c.dataset.plan.slice(1);
+        });
+        
+        card.classList.add('selected');
+        selectBtn.classList.add('selected');
+        selectBtn.textContent = 'Selected';
+        
+        // Show checkout
+        document.getElementById('selected-plan-name').textContent = 
+          selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1) + ' Plan';
+        document.getElementById('selected-plan-price').textContent = '$' + selectedPrice;
+        
+        pricingGrid.style.display = 'none';
+        checkoutSection.classList.add('show');
+        
+        // Initialize PayPal button
+        initializePayPalButton();
+      });
+    });
+
+    function changePlan() {
+      pricingGrid.style.display = 'grid';
+      checkoutSection.classList.remove('show');
+      document.getElementById('paypal-button-container').innerHTML = '';
+    }
+
+    function showMessage(text, type) {
+      messageDiv.textContent = text;
+      messageDiv.className = `message ${type} show`;
+      setTimeout(() => {
+        messageDiv.className = 'message';
+      }, 5000);
+    }
+
+    function validateEmail(email) {
+      return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+    }
+
+    function initializePayPalButton() {
+      // Clear existing button
+      const container = document.getElementById('paypal-button-container');
+      container.innerHTML = '';
+
+      // PayPal buttons
+      paypal.Buttons({
+        onInit: function(data, actions) {
+          actions.disable();
+
+          emailInput.addEventListener('input', function() {
+            if (validateEmail(emailInput.value)) {
+              actions.enable();
+            } else {
+              actions.disable();
+            }
+          });
+        },
+
+        createOrder: async function() {
+          const email = emailInput.value;
+
+          if (!validateEmail(email)) {
+            showMessage('Please enter a valid email address', 'error');
+            throw new Error('Invalid email');
+          }
+
+          try {
+            const response = await fetch('/api/orders', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ 
+                email,
+                price: selectedPrice,
+                plan: selectedPlan
+              }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.error || 'Failed to create order');
+            }
+
+            return data.orderID;
+          } catch (error) {
+            showMessage(error.message, 'error');
+            throw error;
+          }
+        },
+
+        onApprove: async function(data) {
+          loadingDiv.classList.add('show');
+          document.getElementById('paypal-button-container').style.display = 'none';
+
+          try {
+            const response = await fetch(`/api/orders/${data.orderID}/capture`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ 
+                email: emailInput.value,
+                plan: selectedPlan,
+                price: selectedPrice
+              }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+              throw new Error(result.error || 'Failed to process payment');
+            }
+
+            // Show success screen
+            loadingDiv.classList.remove('show');
+            checkoutSection.classList.remove('show');
+            document.getElementById('license-key-display').textContent = result.licenseKey;
+            successScreen.classList.add('show');
+
+          } catch (error) {
+            loadingDiv.classList.remove('show');
+            document.getElementById('paypal-button-container').style.display = 'block';
+            showMessage(error.message, 'error');
+          }
+        },
+
+        onError: function(err) {
+          console.error('PayPal error:', err);
+          showMessage('An error occurred during payment. Please try again.', 'error');
+        },
+
+        style: {
+          layout: 'vertical',
+          color: 'blue',
+          shape: 'rect',
+          label: 'pay',
+          height: 50
+        },
+      }).render('#paypal-button-container');
+    }
+  </script>
+</body>
+</html>
