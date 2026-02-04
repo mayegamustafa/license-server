@@ -11,6 +11,14 @@ const LICENSES_FILE = path.join(__dirname, '../storage/licenses.json');
  * Initialize storage file if it doesn't exist
  */
 function initStorage() {
+  const storageDir = path.dirname(LICENSES_FILE);
+  
+  // Create storage directory if it doesn't exist
+  if (!fs.existsSync(storageDir)) {
+    fs.mkdirSync(storageDir, { recursive: true });
+  }
+  
+  // Create licenses file if it doesn't exist
   if (!fs.existsSync(LICENSES_FILE)) {
     fs.writeFileSync(LICENSES_FILE, JSON.stringify({ licenses: [] }, null, 2));
   }
